@@ -1,5 +1,5 @@
 {
     "files.associations": {
-        "3001_tower_of_hanoi": "c"
+        "stdio.h": "c"
     }
 }
