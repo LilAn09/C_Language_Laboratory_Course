@@ -39,23 +39,6 @@ void clear_playlist(PlaylistManager* manager);                                  
 void sort_by_title(PlaylistManager* manager);                                   // 按照歌曲名排序（非必做）
 
 
-// linux/Mac 版本
-// void play_audio(const char* filename) {
-//     char command[256];
-//     FILE *mp3File = fopen(filename, "rb");
-//     if (!mp3File) {
-//         printf("无法打开文件 %s\n", filename);
-//         return;
-//     }
-//     else{
-//         printf("Founded File!!");
-//     }
-//     snprintf(command, sizeof(command), "afplay \"%s\"", filename);
-//     int ret = system(command);
-//     if (ret != 0) {
-//         printf("播放失败或中断，请检查文件格式是否支持。\n");
-//     }
-// }
 
 // Windows 版本
 void play_audio(const char* filename){
@@ -74,9 +57,7 @@ void play_audio(const char* filename){
         printf("播放失败或中断，请检查文件格式是否支持。\n");
     }
 
-//     // 或者使用 Windows Media Player
-//     // sprintf(command, "wmplayer \"%s\"", filename);
-//     // system(command);
+
 }
 
 // void play_audio(const char* filename){
@@ -111,6 +92,9 @@ int load_songs_from_file(PlaylistManager* manager, const char* filename) {
     	if (len > 0 && line[len-1] == '\n') {
         	line[len-1] = '\0';  // 去掉 \n
     	}
+        if (strlen(line) == 0) {
+            continue;
+        }
         Song *new_node = (Song*)malloc(sizeof(Song));
         if(new_node == NULL){
             printf("Node allocation failed\n");

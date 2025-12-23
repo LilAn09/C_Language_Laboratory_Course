@@ -76,6 +76,9 @@ int load_songs_from_file(PlaylistManager* manager, const char* filename){
     	if (len > 0 && line[len-1] == '\n') {
         	line[len-1] = '\0';  // 去掉 \n
     	}
+        if (strlen(line) == 0) {
+            continue;
+        }
         Song *new_node = (Song*)malloc(sizeof(Song));
         if(new_node == NULL){
             printf("Node allocation failed\n");
