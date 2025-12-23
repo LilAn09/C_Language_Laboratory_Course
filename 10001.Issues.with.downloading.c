@@ -7,7 +7,7 @@ typedef struct Node {
     char name[50];
     int level; // 1=普通, 2=VIP, 3=SVIP
     struct Node* next;
-} Node;
+} Node,*QueuePtr;
 
 // 队列结构体
 typedef struct Queue {
@@ -17,14 +17,24 @@ typedef struct Queue {
 
 // 初始化队列
 // 参数：q-队列
-void initQueue(Queue* q) {
+int initQueue(Queue* q) {
     // TODO：完成队列初始化代码，队头用front,队尾用rear表示
-    
+    q->front = q->rear= (QueuePtr)malloc(sizeof(Node));
+    if(!q->front){
+        printf("overflow.");
+        return -1;
+    }
+    q->front->next=NULL;
+    return 0;
 }
 
 // 创建节点
 Node* createNode(const char* name, int level) {
     Node* newNode = (Node*)malloc(sizeof(Node));
+        if (!newNode) {
+        printf("内存分配失败！\n");
+        return NULL;
+    }
     strcpy(newNode->name, name);
     newNode->level = level;
     newNode->next = NULL;
@@ -35,26 +45,52 @@ Node* createNode(const char* name, int level) {
 // 参数：q-队列，name-用户名，level-等级
 void request(Queue* q, const char* name, int level) {
     Node* newNode = createNode(name, level);
+    if (!newNode) return;
     // 队列为空，直接加入
-    if (q->front == NULL) {
+    if (q->front->next == NULL) {
         // TODO：完成队列为空的逻辑
-
+        q->front->next=newNode;
+        q->rear=newNode;
+        return ;
     }
     // 插入逻辑：高等级插在低等级用户前面，同等级则排在后面
     // TODO：请按照该部分的要求补全代码
+    Node* cur=q->front->next;
+    Node* prev=q->front;
+    while(cur!=NULL){
+        if(cur->level<newNode->level){
+            break;
+        }else{
+            prev=cur;
+            cur=cur->next;
+        }
+    }
+    if(cur == NULL){
+        q->rear->next=newNode;
+        newNode->next=NULL;
+        q->rear = newNode;
+    }else{
+        newNode->next=cur;
+        prev->next=newNode;
+    }
+
     
 }
 
 // Download操作：输出队首元素，并删除该元素
 // 参数：q-队列
 void download(Queue* q) {
-    if (q->front == NULL) {
+    if (q->front->next == NULL) {
         printf("队列为空，没有可下载的任务。\n");
         return;
     }
-    Node* temp = q->front;
+    Node* temp = q->front->next;
     printf("下载中：%s (level=%d)\n", temp->name, temp->level);
     //TODO：继续完成删除队首元素的逻辑
+    q->front->next=temp->next;
+    if(q->rear == temp){
+        q->rear = q->front;
+    }
 
     free(temp);
 }
@@ -62,15 +98,16 @@ void download(Queue* q) {
 // Remove操作：删除指定用户
 // 参数：q-队列，name-用户名
 void removeUser(Queue* q, const char* name) {
-    if (q->front == NULL) {
+    if (q->front->next == NULL) {
         printf("队列为空，无法删除。\n");
         return;
     }
-    Node* prev = NULL;
-    Node* curr = q->front;
+    Node* prev = q->front;
+    Node* curr = q->front->next;
     while (curr != NULL && strcmp(curr->name, name) != 0) {
         // TODO：请完善寻找指定用户位置的逻辑
-
+            prev=curr;
+            curr=curr->next;
     }
     if (curr == NULL) {
         printf("未找到用户：%s\n", name);
@@ -78,24 +115,28 @@ void removeUser(Queue* q, const char* name) {
     }
     // 删除指定用户，注意考虑队头和队尾的情况
     // TODO：请完善该部分代码
-
+    prev->next=curr->next;
+    if(q->rear==curr){
+        q->rear=prev;
+    }
     free(curr);
     printf("已删除用户：%s\n", name);
+    return ;
 }
 
 // Display操作：显示队列
 // 参数：q-队列
 void display(Queue* q) {
-    if (q->front == NULL) {
+    if (q->front->next == NULL) {
         printf("当前队列为空。\n");
         return;
     }
-    Node* curr = q->front;
+    Node* curr = q->front->next;
     printf("当前下载队列：\n");
     while (curr != NULL) {
         printf("用户名: %-10s | level: %d\n", curr->name, curr->level);
         // TODO：请完善剩余代码逻辑
-
+        curr = curr->next;
     }
 }
 
@@ -116,6 +157,10 @@ int main() {
             scanf("%s %d", name, &level);
             // 完善用户等级判断逻辑，当出现无效用户等级时，输出：“无效的用户等级，请输入 1（普通） 2（VIP） 3（SVIP）。”，然后换行。
             // TODO：
+            if(level!=1 && level !=2 && level !=3){
+                printf("无效的用户等级，请输入 1（普通） 2（VIP） 3（SVIP）。\n");
+                continue;
+            }
             request(&q, name, level);
             printf("用户 %s (level=%d) 已加入队列。\n", name, level);
 
@@ -132,7 +177,9 @@ int main() {
         } else if (strcmp(command, "Exit") == 0) {
             printf("程序已退出。\n");
             break;
-        } 
+        } else{
+            printf("无效命令，请重新输入。\n");
+        }
         // 完善代码逻辑，当输入无效命令时，请输出“无效命令，请重新输入。”，然后换行
         // TODO：
     }
