@@ -2,23 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ÓÃ»§½Úµã¶¨Òå
+// ç”¨æˆ·èŠ‚ç‚¹å®šä¹‰
 typedef struct Node {
     char name[50];
-    int level; // 1=ÆÕÍ¨, 2=VIP, 3=SVIP
+    int level; // 1=æ™®é€š, 2=VIP, 3=SVIP
     struct Node* next;
 } Node,*QueuePtr;
 
-// ¶ÓÁĞ½á¹¹Ìå
+// é˜Ÿåˆ—ç»“æ„ä½“
 typedef struct Queue {
     Node* front;
     Node* rear;
 } Queue;
 
-// ³õÊ¼»¯¶ÓÁĞ
-// ²ÎÊı£ºq-¶ÓÁĞ
+// åˆå§‹åŒ–é˜Ÿåˆ—
+// å‚æ•°ï¼šq-é˜Ÿåˆ—
 int initQueue(Queue* q) {
-    // TODO£ºÍê³É¶ÓÁĞ³õÊ¼»¯´úÂë£¬¶ÓÍ·ÓÃfront,¶ÓÎ²ÓÃrear±íÊ¾
+    // TODOï¼šå®Œæˆé˜Ÿåˆ—åˆå§‹åŒ–ä»£ç ï¼Œé˜Ÿå¤´ç”¨front,é˜Ÿå°¾ç”¨rearè¡¨ç¤º
     q->front = q->rear= (QueuePtr)malloc(sizeof(Node));
     if(!q->front){
         printf("overflow.");
@@ -28,11 +28,11 @@ int initQueue(Queue* q) {
     return 0;
 }
 
-// ´´½¨½Úµã
+// åˆ›å»ºèŠ‚ç‚¹
 Node* createNode(const char* name, int level) {
     Node* newNode = (Node*)malloc(sizeof(Node));
         if (!newNode) {
-        printf("ÄÚ´æ·ÖÅäÊ§°Ü£¡\n");
+        printf("å†…å­˜åˆ†é…å¤±è´¥ï¼\n");
         return NULL;
     }
     strcpy(newNode->name, name);
@@ -41,20 +41,20 @@ Node* createNode(const char* name, int level) {
     return newNode;
 }
 
-// Request²Ù×÷£ºÈë¶Ó£¨´øÓÅÏÈ¼¶²åÈë£©
-// ²ÎÊı£ºq-¶ÓÁĞ£¬name-ÓÃ»§Ãû£¬level-µÈ¼¶
+// Requestæ“ä½œï¼šå…¥é˜Ÿï¼ˆå¸¦ä¼˜å…ˆçº§æ’å…¥ï¼‰
+// å‚æ•°ï¼šq-é˜Ÿåˆ—ï¼Œname-ç”¨æˆ·åï¼Œlevel-ç­‰çº§
 void request(Queue* q, const char* name, int level) {
     Node* newNode = createNode(name, level);
     if (!newNode) return;
-    // ¶ÓÁĞÎª¿Õ£¬Ö±½Ó¼ÓÈë
+    // é˜Ÿåˆ—ä¸ºç©ºï¼Œç›´æ¥åŠ å…¥
     if (q->front->next == NULL) {
-        // TODO£ºÍê³É¶ÓÁĞÎª¿ÕµÄÂß¼­
+        // TODOï¼šå®Œæˆé˜Ÿåˆ—ä¸ºç©ºçš„é€»è¾‘
         q->front->next=newNode;
         q->rear=newNode;
         return ;
     }
-    // ²åÈëÂß¼­£º¸ßµÈ¼¶²åÔÚµÍµÈ¼¶ÓÃ»§Ç°Ãæ£¬Í¬µÈ¼¶ÔòÅÅÔÚºóÃæ
-    // TODO£ºÇë°´ÕÕ¸Ã²¿·ÖµÄÒªÇó²¹È«´úÂë
+    // æ’å…¥é€»è¾‘ï¼šé«˜ç­‰çº§æ’åœ¨ä½ç­‰çº§ç”¨æˆ·å‰é¢ï¼ŒåŒç­‰çº§åˆ™æ’åœ¨åé¢
+    // TODOï¼šè¯·æŒ‰ç…§è¯¥éƒ¨åˆ†çš„è¦æ±‚è¡¥å…¨ä»£ç 
     Node* cur=q->front->next;
     Node* prev=q->front;
     while(cur!=NULL){
@@ -77,16 +77,16 @@ void request(Queue* q, const char* name, int level) {
     
 }
 
-// Download²Ù×÷£ºÊä³ö¶ÓÊ×ÔªËØ£¬²¢É¾³ı¸ÃÔªËØ
-// ²ÎÊı£ºq-¶ÓÁĞ
+// Downloadæ“ä½œï¼šè¾“å‡ºé˜Ÿé¦–å…ƒç´ ï¼Œå¹¶åˆ é™¤è¯¥å…ƒç´ 
+// å‚æ•°ï¼šq-é˜Ÿåˆ—
 void download(Queue* q) {
     if (q->front->next == NULL) {
-        printf("¶ÓÁĞÎª¿Õ£¬Ã»ÓĞ¿ÉÏÂÔØµÄÈÎÎñ¡£\n");
+        printf("é˜Ÿåˆ—ä¸ºç©ºï¼Œæ²¡æœ‰å¯ä¸‹è½½çš„ä»»åŠ¡ã€‚\n");
         return;
     }
     Node* temp = q->front->next;
-    printf("ÏÂÔØÖĞ£º%s (level=%d)\n", temp->name, temp->level);
-    //TODO£º¼ÌĞøÍê³ÉÉ¾³ı¶ÓÊ×ÔªËØµÄÂß¼­
+    printf("ä¸‹è½½ä¸­ï¼š%s (level=%d)\n", temp->name, temp->level);
+    //TODOï¼šç»§ç»­å®Œæˆåˆ é™¤é˜Ÿé¦–å…ƒç´ çš„é€»è¾‘
     q->front->next=temp->next;
     if(q->rear == temp){
         q->rear = q->front;
@@ -95,52 +95,52 @@ void download(Queue* q) {
     free(temp);
 }
 
-// Remove²Ù×÷£ºÉ¾³ıÖ¸¶¨ÓÃ»§
-// ²ÎÊı£ºq-¶ÓÁĞ£¬name-ÓÃ»§Ãû
+// Removeæ“ä½œï¼šåˆ é™¤æŒ‡å®šç”¨æˆ·
+// å‚æ•°ï¼šq-é˜Ÿåˆ—ï¼Œname-ç”¨æˆ·å
 void removeUser(Queue* q, const char* name) {
     if (q->front->next == NULL) {
-        printf("¶ÓÁĞÎª¿Õ£¬ÎŞ·¨É¾³ı¡£\n");
+        printf("é˜Ÿåˆ—ä¸ºç©ºï¼Œæ— æ³•åˆ é™¤ã€‚\n");
         return;
     }
     Node* prev = q->front;
     Node* curr = q->front->next;
     while (curr != NULL && strcmp(curr->name, name) != 0) {
-        // TODO£ºÇëÍêÉÆÑ°ÕÒÖ¸¶¨ÓÃ»§Î»ÖÃµÄÂß¼­
+        // TODOï¼šè¯·å®Œå–„å¯»æ‰¾æŒ‡å®šç”¨æˆ·ä½ç½®çš„é€»è¾‘
             prev=curr;
             curr=curr->next;
     }
     if (curr == NULL) {
-        printf("Î´ÕÒµ½ÓÃ»§£º%s\n", name);
+        printf("æœªæ‰¾åˆ°ç”¨æˆ·ï¼š%s\n", name);
         return;
     }
-    // É¾³ıÖ¸¶¨ÓÃ»§£¬×¢Òâ¿¼ÂÇ¶ÓÍ·ºÍ¶ÓÎ²µÄÇé¿ö
-    // TODO£ºÇëÍêÉÆ¸Ã²¿·Ö´úÂë
+    // åˆ é™¤æŒ‡å®šç”¨æˆ·ï¼Œæ³¨æ„è€ƒè™‘é˜Ÿå¤´å’Œé˜Ÿå°¾çš„æƒ…å†µ
+    // TODOï¼šè¯·å®Œå–„è¯¥éƒ¨åˆ†ä»£ç 
     prev->next=curr->next;
     if(q->rear==curr){
         q->rear=prev;
     }
     free(curr);
-    printf("ÒÑÉ¾³ıÓÃ»§£º%s\n", name);
+    printf("å·²åˆ é™¤ç”¨æˆ·ï¼š%s\n", name);
     return ;
 }
 
-// Display²Ù×÷£ºÏÔÊ¾¶ÓÁĞ
-// ²ÎÊı£ºq-¶ÓÁĞ
+// Displayæ“ä½œï¼šæ˜¾ç¤ºé˜Ÿåˆ—
+// å‚æ•°ï¼šq-é˜Ÿåˆ—
 void display(Queue* q) {
     if (q->front->next == NULL) {
-        printf("µ±Ç°¶ÓÁĞÎª¿Õ¡£\n");
+        printf("å½“å‰é˜Ÿåˆ—ä¸ºç©ºã€‚\n");
         return;
     }
     Node* curr = q->front->next;
-    printf("µ±Ç°ÏÂÔØ¶ÓÁĞ£º\n");
+    printf("å½“å‰ä¸‹è½½é˜Ÿåˆ—ï¼š\n");
     while (curr != NULL) {
-        printf("ÓÃ»§Ãû: %-10s | level: %d\n", curr->name, curr->level);
-        // TODO£ºÇëÍêÉÆÊ£Óà´úÂëÂß¼­
+        printf("ç”¨æˆ·å: %-10s | level: %d\n", curr->name, curr->level);
+        // TODOï¼šè¯·å®Œå–„å‰©ä½™ä»£ç é€»è¾‘
         curr = curr->next;
     }
 }
 
-// Ö÷º¯Êı£ºÄ£Äâ²Ù×÷ÃüÁî
+// ä¸»å‡½æ•°ï¼šæ¨¡æ‹Ÿæ“ä½œå‘½ä»¤
 int main() {
     Queue q;
     initQueue(&q);
@@ -148,21 +148,21 @@ int main() {
     char command[50];
     char name[50];
     int level;
-    printf("=== Ä³¶ÈÍøÅÌÏÂÔØµ÷¶ÈÏµÍ³ ===\n"); 
-    printf("Ö§³ÖÃüÁî£ºRequest ÓÃ»§Ãû level | Download | Remove ÓÃ»§Ãû | Display | Exit\n");
-    printf("ÇëÊäÈëÃüÁî£º\n");
+    printf("=== æŸåº¦ç½‘ç›˜ä¸‹è½½è°ƒåº¦ç³»ç»Ÿ ===\n"); 
+    printf("æ”¯æŒå‘½ä»¤ï¼šRequest ç”¨æˆ·å level | Download | Remove ç”¨æˆ·å | Display | Exit\n");
+    printf("è¯·è¾“å…¥å‘½ä»¤ï¼š\n");
     while (1) {
         scanf("%s", command);
         if (strcmp(command, "Request") == 0) {
             scanf("%s %d", name, &level);
-            // ÍêÉÆÓÃ»§µÈ¼¶ÅĞ¶ÏÂß¼­£¬µ±³öÏÖÎŞĞ§ÓÃ»§µÈ¼¶Ê±£¬Êä³ö£º¡°ÎŞĞ§µÄÓÃ»§µÈ¼¶£¬ÇëÊäÈë 1£¨ÆÕÍ¨£© 2£¨VIP£© 3£¨SVIP£©¡£¡±£¬È»ºó»»ĞĞ¡£
-            // TODO£º
+            // å®Œå–„ç”¨æˆ·ç­‰çº§åˆ¤æ–­é€»è¾‘ï¼Œå½“å‡ºç°æ— æ•ˆç”¨æˆ·ç­‰çº§æ—¶ï¼Œè¾“å‡ºï¼šâ€œæ— æ•ˆçš„ç”¨æˆ·ç­‰çº§ï¼Œè¯·è¾“å…¥ 1ï¼ˆæ™®é€šï¼‰ 2ï¼ˆVIPï¼‰ 3ï¼ˆSVIPï¼‰ã€‚â€ï¼Œç„¶åæ¢è¡Œã€‚
+            // TODOï¼š
             if(level!=1 && level !=2 && level !=3){
-                printf("ÎŞĞ§µÄÓÃ»§µÈ¼¶£¬ÇëÊäÈë 1£¨ÆÕÍ¨£© 2£¨VIP£© 3£¨SVIP£©¡£\n");
+                printf("æ— æ•ˆçš„ç”¨æˆ·ç­‰çº§ï¼Œè¯·è¾“å…¥ 1ï¼ˆæ™®é€šï¼‰ 2ï¼ˆVIPï¼‰ 3ï¼ˆSVIPï¼‰ã€‚\n");
                 continue;
             }
             request(&q, name, level);
-            printf("ÓÃ»§ %s (level=%d) ÒÑ¼ÓÈë¶ÓÁĞ¡£\n", name, level);
+            printf("ç”¨æˆ· %s (level=%d) å·²åŠ å…¥é˜Ÿåˆ—ã€‚\n", name, level);
 
         } else if (strcmp(command, "Download") == 0) {
             download(&q);
@@ -175,13 +175,13 @@ int main() {
             display(&q);
 
         } else if (strcmp(command, "Exit") == 0) {
-            printf("³ÌĞòÒÑÍË³ö¡£\n");
+            printf("ç¨‹åºå·²é€€å‡ºã€‚\n");
             break;
         } else{
-            printf("ÎŞĞ§ÃüÁî£¬ÇëÖØĞÂÊäÈë¡£\n");
+            printf("æ— æ•ˆå‘½ä»¤ï¼Œè¯·é‡æ–°è¾“å…¥ã€‚\n");
         }
-        // ÍêÉÆ´úÂëÂß¼­£¬µ±ÊäÈëÎŞĞ§ÃüÁîÊ±£¬ÇëÊä³ö¡°ÎŞĞ§ÃüÁî£¬ÇëÖØĞÂÊäÈë¡£¡±£¬È»ºó»»ĞĞ
-        // TODO£º
+        // å®Œå–„ä»£ç é€»è¾‘ï¼Œå½“è¾“å…¥æ— æ•ˆå‘½ä»¤æ—¶ï¼Œè¯·è¾“å‡ºâ€œæ— æ•ˆå‘½ä»¤ï¼Œè¯·é‡æ–°è¾“å…¥ã€‚â€ï¼Œç„¶åæ¢è¡Œ
+        // TODOï¼š
     }
 
     return 0;
