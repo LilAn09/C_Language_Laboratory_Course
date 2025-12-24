@@ -31,44 +31,65 @@ static void print_head_no_count(const char *title, const Customer *arr, int n) {
 
 /* ================= 无序数组 ================= */
 float uaFindInterestById(const Customer customers[], int n, int id, Metrics *m) {
+    // TODO:
+    // 1) for i=0..n-1 线性扫描
+    // 2) 每比较一次可执行 if(m) m->compares++;
+    // 3) 若 customers[i].id == id 返回 customers[i].interest
+    // 4) 未找到返回 INTEREST_NOT_FOUND
     for (int i = 0; i < n; ++i) {
         if (customers[i].id == id) {
-            return customers[i].interest;
+            return customers[i].interest; // 若 customers[i].id == id 返回 customers[i].interest
         }
     }
-    return INTEREST_NOT_FOUND;
+    return INTEREST_NOT_FOUND; // 未找到返回 INTEREST_NOT_FOUND
 }
 
 int uaInsertBack(Customer customers[], int n, int capacity, Customer c, Metrics *m) {
+    // TODO:
+    // 1) 若 n == capacity → 返回 -1（容量不足）
+    // 2) customers[n] = c; 若统计则 if(m) m->moves++;
+    // 3) 返回 n+1
     if (n == capacity) {
         return -1;
-    }
+    } // 若 n == capacity → 返回 -1（容量不足）
     customers[n] = c;
-    return n + 1;
+    return n + 1; // 返回 n+1（当前数组容量）
 }
 
 int uaDeleteById(Customer customers[], int n, int id, Metrics *m) {
+    // TODO:
+    // 1) 线性查找目标下标 idx（比较时可 if(m) m->compares++）
+    // 2) 未找到 → 返回 -1
+    // 3) for i=idx+1..n-1：customers[i-1] = customers[i]; 若统计则 moves++
+    // 4) 返回 n-1
     int idx = -1;
     for (int i = 0; i < n; ++i) {
         if (customers[i].id == id) {
             idx = i;
             break;
-        }
+        } // 线性查找目标下标 idx
     }
     if (idx == -1) {
         return -1;
-    }
+    } // 未找到 → 返回 -1
     for (int i = idx + 1; i < n; ++i) {
         customers[i - 1] = customers[i];
     }
-    return n - 1;
+    return n - 1; // 返回 n-1
 }
 
 /* ================= 有序数组（按id升序） ================= */
 float oaFindInterestById(const Customer customers[], int n, int id, Metrics *m) {
+    // TODO:
+    // 1) lo=0, hi=n-1
+    // 2) while (lo<=hi): mid=(lo+hi)/2
+    //    比较时可 if(m) m->compares++;
+    //    a) customers[mid].id == id → 返回 customers[mid].interest
+    //    b) customers[mid].id < id → lo=mid+1；否则 hi=mid-1
+    // 3) 未找到 → 返回 INTEREST_NOT_FOUND
     int low = 0, high = n - 1;
     while (low <= high) {
-        int mid = low + (high - low) / 2;
+        int mid = low + (high - low) / 2; // 避免整数溢出
         if (customers[mid].id == id) {
             return customers[mid].interest;
         } else if (customers[mid].id < id) {
@@ -77,20 +98,27 @@ float oaFindInterestById(const Customer customers[], int n, int id, Metrics *m) 
             high = mid - 1;
         }
     }
-    return INTEREST_NOT_FOUND;
+    return INTEREST_NOT_FOUND; // 未找到 → 返回 INTEREST_NOT_FOUND
 }
 
 int oaInsertKeepOrder(Customer customers[], int n, int capacity, Customer c, Metrics *m) {
+    // TODO:
+    // 1) 容量判定：若 n == capacity → 返回 -1
+    // 2) 用二分“下界”定位插入位置 pos：第一个使 customers[pos].id >= c.id 的位置（0..n）
+    //    比较过程中可 if(m) m->compares++;
+    // 3) for i=n..pos+1 递减：customers[i] = customers[i-1]；若统计 moves++
+    // 4) customers[pos] = c；若统计 moves++
+    // 5) 返回 n+1
     if (n == capacity) {
         return -1;
-    }
+    } //容量判定
     int pos = n;
     int low = 0, high = n - 1;
     while (low <= high) {
-        int mid = low + (high - low) / 2;
+        int mid = low + (high - low) / 2; // 避免整数溢出
         if (customers[mid].id >= c.id) {
-            pos = mid;
-            high = mid - 1;
+            pos = mid; // 标记mid
+            high = mid - 1; // 接下来寻找第一个使customers[pos].id >= c.id 的位置
         } else {
             low = mid + 1;
         }
@@ -99,16 +127,21 @@ int oaInsertKeepOrder(Customer customers[], int n, int capacity, Customer c, Met
         customers[i] = customers[i - 1];
     }
     customers[pos] = c;
-    return n + 1;
+    return n + 1; // 返回当前数组元素个数
 }
 
 int oaDeleteById(Customer customers[], int n, int id, Metrics *m) {
+    // TODO:
+    // 1) 先二分查找 idx；比较时可 if(m) m->compares++;
+    // 2) 未找到 → 返回 -1
+    // 3) for i=idx+1..n-1：customers[i-1] = customers[i]；若统计 moves++
+    // 4) 返回 n-1
     int idx = -1;
     int low = 0, high = n - 1;
     while (low <= high) {
         int mid = low + (high - low) / 2;
         if (customers[mid].id == id) {
-            idx = mid;
+            idx = mid; // 先二分查找 idx
             break;
         } else if (customers[mid].id < id) {
             low = mid + 1;
